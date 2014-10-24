@@ -52,7 +52,26 @@ disp(['Total Paid: ' num2str(totalpayment)])
 disp(['Net : ' num2str(totalbal+totalpayment)])
 %% Repayment Period
 
-
+while totalbal > 0;
+    paytemp = payment2;
+    for i = 1:8
+        apy = loans.(loannames{pay(i)}).apy;
+        p0 = loans.(loannames{pay(i)}).workingbal;
+        interest = dailyInterest(p0,apy,month);
+        bal = loans.(loannames{pay(i)}).workingbal + interest;
+        if pay(paycount) == pay(i) && bal > 0
+            bal = bal - paytemp;
+            if bal <= 0
+                paytemp = -bal;
+                bal = 0;
+                paycount = paycount + 1;
+            end
+        end
+        loans.(loannames{pay(i)}).workingbal = bal;
+    end
+    workdate = workdate + month;
+    n = n+1;
+end
 
 disp('Repayment Period')
 
