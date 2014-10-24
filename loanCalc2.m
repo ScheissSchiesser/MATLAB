@@ -5,7 +5,7 @@ totalbal = 0;
 startingbal = 0;
 %% Deferment period
 workdate = todaynum;
-month = 365/12;
+month = 365.25/12;
 loannames = fieldnames(loans);
 pay = payorder;
 paycount = 1;
@@ -88,6 +88,7 @@ findate = datestr(workdate-month);
 totalpayment =totalpayment + n.*payment2;
 total = totalpayment;
 disp('Repayment Period')
+disp(['Time of repayment: ' num2str((workdate-month-todaynum)./365.25,3)])
 disp(findate)
 disp(['Total Paid ' num2str(totalpayment)])
 
