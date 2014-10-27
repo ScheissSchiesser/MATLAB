@@ -9,15 +9,17 @@ month = 365.25/12;
 loannames = fieldnames(loans);
 pay = payorder;
 paycount = 1;
-leftoverpay = 0;
 n = 0;
 for i = 1:8;
     loans.(loannames{i}).workingbal = loans.(loannames{i}).bal;
     startingbal = startingbal+loans.(loannames{i}).bal;
 end
+
+% Pay only 1 loan account based on loan order
 while workdate < capdate
     paytemp = payment1;
     for i = 1:8
+        if loans.(loannames{pay(i)}).sub == 0
         apy = loans.(loannames{pay(i)}).apy;
         p0 = min(loans.(loannames{pay(i)}).prinstart,...
             loans.(loannames{pay(i)}).workingbal);
@@ -32,6 +34,7 @@ while workdate < capdate
             end
         end
         loans.(loannames{pay(i)}).workingbal = bal;
+        end
     end
     workdate = workdate + month;
     n = n+1;
@@ -53,6 +56,9 @@ disp(['Net : ' num2str(totalbal+totalpayment)])
 %% Repayment Period
 paycount = 1;
 n = 0;
+for i = 1:8
+    loans.(loannames{i}).workingbal = loans.(loannames{i}).prinstart;
+end
 while totalbal > 0;
     paytemp = payment2;
     totalbal = 0;
@@ -63,7 +69,8 @@ while totalbal > 0;
         interest = dailyInterest(bal,apy,month);
         paytemp = paytemp - interest;
     end
-%     Use leftover money for paying down principal
+    
+%     Use leftover money for paying down principal based on order
     for i = 1:8
         name = loannames{pay(i)};
         bal = loans.(name).workingbal;
@@ -88,7 +95,7 @@ findate = datestr(workdate-month);
 totalpayment =totalpayment + n.*payment2;
 total = totalpayment;
 disp('Repayment Period')
-disp(['Time of repayment: ' num2str((workdate-month-todaynum)./365.25,3)])
+disp(['Time of repayment: ' num2str((workdate-month-capdate)./365.25,3)])
 disp(findate)
 disp(['Total Paid ' num2str(totalpayment)])
 
