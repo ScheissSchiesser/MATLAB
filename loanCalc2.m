@@ -20,20 +20,20 @@ while workdate < capdate
     paytemp = payment1;
     for i = 1:8
         if loans.(loannames{pay(i)}).sub == 0
-        apy = loans.(loannames{pay(i)}).apy;
-        p0 = min(loans.(loannames{pay(i)}).prinstart,...
-            loans.(loannames{pay(i)}).workingbal);
-        interest = dailyInterest(p0,apy,month);
-        bal = loans.(loannames{pay(i)}).workingbal + interest;
-        if pay(paycount) == pay(i) && bal > 0
-            bal = bal - paytemp;
-            if bal <= 0
-                paytemp = -bal;
-                bal = 0;
-                paycount = paycount + 1;
+            apy = loans.(loannames{pay(i)}).apy;
+            p0 = min(loans.(loannames{pay(i)}).prinstart,...
+                loans.(loannames{pay(i)}).workingbal);
+            interest = dailyInterest(p0,apy,month);
+            bal = loans.(loannames{pay(i)}).workingbal + interest;
+            if pay(paycount) == pay(i) && bal > 0
+                bal = bal - paytemp;
+                if bal <= 0
+                    paytemp = -bal;
+                    bal = 0;
+                    paycount = paycount + 1;
+                end
             end
-        end
-        loans.(loannames{pay(i)}).workingbal = bal;
+            loans.(loannames{pay(i)}).workingbal = bal;
         end
     end
     workdate = workdate + month;
@@ -48,6 +48,13 @@ for i = 1:8
 end
 
 totalpayment = n.*payment1;
+temptotal = 0;
+% for i = 1:8
+%     temptotal = temptotal + (loans.(loannames{i}).workingbal-...
+%         loans.(loannames{i}).prinstart);
+%     loans.(loannames{i}).workingbal = loans.(loannames{i}).prinstart;
+%     totalpayment = temptotal;
+% end
 disp('Deferment Period')
 disp(['Starting Balance: ' num2str(startingbal)])
 disp(['Total Balance: ' num2str(totalbal)])
@@ -56,9 +63,7 @@ disp(['Net : ' num2str(totalbal+totalpayment)])
 %% Repayment Period
 paycount = 1;
 n = 0;
-for i = 1:8
-    loans.(loannames{i}).workingbal = loans.(loannames{i}).prinstart;
-end
+
 while totalbal > 0;
     paytemp = payment2;
     totalbal = 0;
